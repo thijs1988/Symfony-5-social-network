@@ -1,0 +1,30 @@
+<div class="media text-muted pt-3">
+    {% if post.user.profile %}
+        <img src="{{ '/uploads/' ~ post.user.profile.image }}" alt="" class="mr-2 rounded size">
+        {% else %}
+        {% set initials = post.user.fullName|split(' ') %}
+    <img data-src="holder.js/32x32?text={{ attribute(initials, 0)|first }}{{ attribute(initials, 1)|first }}&bg=e83e8c&fg=fff&size=8" alt="" class="mr-2 rounded">
+    {% endif %}
+    <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+        <span class="d-block">
+            <a href="{{ path('micro_post_user', {'username': post.user.username }) }}">
+                <strong class="text-gray-dark">@{{ post.user.username }}</strong>
+            </a>
+             <small>· {{ post.time|date("d/m/y") }}</small></span>
+        <a href="{{ path('micro_post_post', {'id': post.id }) }}">{{ post.text }}</a>
+    </p>
+    <small class="d-block text-left mt-3">
+    {% for view in views %}
+        {% if post.id == view.post.id %}
+                <p style="font-size: x-small"><strong>Views: {{ view.viewCount }}</strong></p>
+        {% endif %}
+    {% endfor %}
+
+        {% for like in likes %}
+            {% if post.id == like.post.id %}
+                <p style="font-size: x-small; margin-top:-15px;"><strong>Likes: {{ like.likeCount }}</strong></p>
+            {% endif %}
+        {% endfor %}
+    </small>
+
+</div>

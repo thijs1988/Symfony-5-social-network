@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div class="col-6 offset-3">
+    <div class="my-3 p-3 bg-white rounded box-shadow">
+    {% if user %}
+        <h5>Congratulations!</h5>
+        <p>Your account is now confirmed! You can now sign in
+            <a href="{{ path('security_login') }}">here</a>
+            {% else %}
+                Something went wrong. Please check your e-mail.
+            {% endif %}
+        </p>
+    </div>
+    </div>
+{% endblock %}

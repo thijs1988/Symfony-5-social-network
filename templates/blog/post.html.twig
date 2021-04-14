@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block body %}
+        <p>ID {{ id }}</p>
+        <h3>{{ post.title|upper }}</h3>
+        <p>{{ post.text }}</p>
+        <p>{{ post.date|date('H:i:s') }}</p>
+        {{ 560|price }}
+        Here is the current locale {{  locale }}
+        <p>{{ message }}</p>
+{% endblock %}

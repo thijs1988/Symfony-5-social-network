@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('build/app.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    {% endblock %}
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark navbar-expand-md sticky-top bg-dark p-0">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0"
+       href="{{ path('micro_post_index') }}">Micro Post App</a>
+    <div class="w-100 order-1 order-md-0">
+        <ul class="navbar-nav px-3">
+            {% if is_granted('ROLE_USER') %}
+                <li class="nav-item text-nowrap">
+                    <a class="nav-link" href="{{ path('micro_post_add') }}">
+                        {{ 'Add new'|trans }}
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class="order-2 order-md-1">
+        <ul class="navbar-nav px-3">
+            {% if is_granted('ROLE_USER') %}
+                <li class="nav-item text-nowrap border-secondary">
+                    <a class="nav-link" href="{{ path('index_conversation') }}"><i class="fa fa-comments" aria-hidden="true"></i> Chat</a>
+                </li>
+                <li class="nav-item text-nowrap border-right border-secondary">
+                    <a class="nav-link" href="{{ path('notification_all') }}">
+
+                    </a>
+                </li>
+                <li class="nav-item text-nowrap border-right border-secondary">
+                <a class="nav-link" href="{{ path('notification_all') }}">
+                    {{ 'Notifications'|trans }}
+                    <span class="badge badge-light" id="notification-count">
+                            <i class="fa fa-circle fa-circle-o-notch fa-spin"></i>
+                        </span>
+                </a>
+                </li>
+                <li>
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-nowrap" data-toggle="dropdown" href="#">Profile</a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                            <li class="dropdown-item"><a href="{{ path('user_profile') }}">{{ app.user.fullName }}</a></li>
+                            <li class="dropdown-item"><a href="{{ path('users_to_follow', { 'id': app.user.id}) }}">Users To Follow</a></li>
+
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item text-nowrap">
+                    <a class="nav-link"
+                       href="{{ logout_path() }}">{{ 'Sign out'|trans }}</a>
+                </li>
+            {% else %}
+                <li class="nav-item text-nowrap border-right">
+                    <a class="nav-link"
+                       href="{{ path('security_login') }}">{{ 'Sign in'|trans }}</a>
+                </li>
+                <li class="nav-item text-nowrap">
+                    <a class="nav-link"
+                       href="{{ path('user_register') }}">{{ 'Register'|trans }}</a>
+                </li>
+
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+
+<main role="main">
+        {% block body %}
+        {% endblock %}
+</main>
+{% block javascripts %}
+    <script src="{{ asset('build/app.js') }}"></script>
+    {% if is_granted('ROLE_USER') %}
+        <script>
+            function fetchNotificationCount() {
+                fetch(
+                    '{{ path('notification_unread') }}',
+                    {'credentials': 'include'}
+                ).then(function (response) {
+                    response.json().then(function (json) {
+                        var count = JSON.stringify(json.count[0][1])
+                        document.getElementById('notification-count').innerText = count.slice(1,-1);
+                        setTimeout(fetchNotificationCount, 5000);
+                    });
+                }).catch(function (reason) {
+
+                });
+            }
+            fetchNotificationCount();
+        </script>
+    {% endif %}
+{% endblock %}
+</body>
+</html>

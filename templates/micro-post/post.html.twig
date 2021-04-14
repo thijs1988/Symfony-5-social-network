@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div class="col-6 offset-3">
+		<div class="my-3 p-3 bg-white rounded box-shadow">
+{{ include('micro-post/raw-post.html.twig', { 'post': post, 'profile': profile }) }}
+    {% set isLiked = post.getLikedBy.contains(app.user) %}
+
+    <div class="pt-2">
+        <button style="display: {% if not isLiked %}block{% else %}none{% endif %}"
+            class="btn btn-outline-secondary btn-sm" id="like">like
+            <span class="badge badge-light" id="likes-like">{{ post.getLikedBy.count }}</span>
+        </button>
+
+        <button style="display: {% if isLiked %}block{% else %}none{% endif %}"
+                class="btn btn-outline-danger btn-sm" id="unlike">Unlike
+            <span class="badge badge-light" id="likes-unlike">{{ post.getLikedBy.count }}</span>
+        </button>
+    </div>
+    </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        var likeButton = document.getElementById('like');
+        var unlikeButton = document.getElementById('unlike');
+        console.log(likeButton);
+        
+
+        addOnClick(
+            likeButton,
+            unlikeButton,
+            document.getElementById('likes-unlike'),
+            '{{ path('likes_like', {'id': post.id}) }}'
+        );
+
+        addOnClick(
+            unlikeButton,
+            likeButton,
+            document.getElementById('likes-like'),
+            '{{ path('likes_unlike', {'id': post.id}) }}'
+        );
+
+        function switchButtons(button, oppositeButton){
+            button.disabled = false;
+            button.style.display = 'none';
+            oppositeButton.style.display = 'block';
+        };
+
+        function addOnClick(button, oppositeButton, likeCount, path) {
+            button.addEventListener('click', function (event){
+                {% if not app.user %}
+                    return window.location.replace('{{ path('user_register') }}')
+                {% endif %}
+                button.disabled = true;
+
+                fetch(path, {'credentials': 'include'}).then(function(response){
+                    response.json().then(function(json) {
+                        likeCount.innerText = json.count;
+                        switchButtons(button, oppositeButton);
+                    })
+                }).catch(function(){
+                    switchButtons(button, oppositeButton);
+                });
+
+                event.preventDefault();
+            });
+        }
+    </script>
+{% endblock %}

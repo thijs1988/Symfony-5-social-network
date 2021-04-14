@@ -1,0 +1,59 @@
+{% extends 'base-conversations.html.twig' %}
+
+{% block title %}Hello IndexController!{% endblock %}
+
+{% block body %}
+    {% for message in app.flashes('notice') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <div class="col-6 offset-3">
+        <h1 class="head">Search Following</h1>
+    <form action="{{ path('search') }}" method="POST">
+        <input type="text" name="name" placeholder="Search Here..." id="searchBox" oninput="search(this.value)">
+    </form>
+        <form id="dataViewer" method="POST">
+
+        </form>
+    </div>
+    <div id="app" data-username="{{ app.user.username }}"></div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+    <script>
+        function search(name) {
+            fetchSearchData(name);
+        }
+
+        function fetchSearchData(name){
+            fetch('/handleSearch',{
+                method: 'POST',
+                body: new URLSearchParams('name=' + name),
+            })
+            .then(res => res.json())
+            .then(res => viewSearchResult(res))
+            .catch(e => console.error('Error: ' + e))
+        }
+
+        function viewSearchResult(data){
+            const dataViewer = document.getElementById("dataViewer");
+            dataViewer.innerHTML = "";
+
+            for(let i =0; i < data.length; i++){
+                var a = document.createElement('a');
+                var id = data[i].id;
+                var url = '{{ path('conversations.newConversations', {'id': 'other_id'}) }}';
+                url = url.replace("other_id", id);
+                var linkText = document.createTextNode(data[i].username);
+                a.appendChild(linkText);
+                a.title = data[i].username;
+                a.href = url;
+                dataViewer.appendChild(a);
+                dataViewer.innerHTML += "<br/>";
+            }
+
+        }
+    </script>
+{% endblock %}

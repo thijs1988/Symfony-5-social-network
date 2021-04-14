@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+	<div class="container-fluid">
+ <div class="col-12">
+	 <div class="row">
+		<div class="col-3" >
+				<div class="text2 text-wrap my-3 p-3 bg-white rounded box-shadow">
+					<h6 class="border-bottom border-gray pb-2 mb-0">Most Viewed Posts:</h6>
+						{% for view in newViews%}
+							{{ include('micro-post/raw-post.html.twig', { 'post': view.post }) }}
+						{% endfor %}
+				</div>
+
+			<div class="text2 text-wrap my-3 p-3 bg-white rounded box-shadow">
+				<h6 class="border-bottom border-gray pb-2 mb-0">Most Liked Posts:</h6>
+				{% for like in newLikes %}
+					{{ include('micro-post/raw-post.html.twig', { 'post': like.post }) }}
+				{% endfor %}
+			</div>
+		</div>
+
+	<div class="col-6">
+		<div class="my-3 p-3 bg-white rounded box-shadow">
+			{% for message in app.flashes('notice') %}
+			<div class="alert alert-success">
+				{{ message }}
+			</div>
+			{% endfor %}
+
+			{% if usersToFollow|length > 0 %}
+				<p>You currently do not follow anyone, you might find there users interesting:</p>
+				{% for userToFollow in usersToFollow %}
+					<a href="{{ path('following_follow', { 'id': userToFollow.id }) }}">
+						@{{ userToFollow.username }},
+					</a>
+				{% endfor %}
+
+			{% else %}
+			<small class="d-block text-right mt-3">
+				<a href="{{ path('micro_post_add') }}">Add new</a>
+			</small>
+
+			<h6 class="border-bottom border-gray pb-2 mb-0">Recent updates</h6>
+			{% for post in posts %}
+			{{ include('micro-post/raw-post.html.twig', { 'post': post }) }}
+
+			<small class="d-block text-right mt-3">
+				{% if is_granted('edit', post) %}
+				<a href="{{ path('micro_post_edit', { 'id': post.id }) }}">Edit</a>
+				{% endif %}
+				{% if is_granted('delete', post) %}
+				<a href="{{ path('micro_post_delete', { 'id': post.id }) }}">Delete</a>
+				{% endif %}
+			</small>
+			{% endfor %}
+			{% endif %}
+			</div>
+	</div>
+		 <div class="col-3">
+			 <div class="text2 text-wrap my-3 p-3 bg-white rounded box-shadow">
+				 <h6 class="border-bottom border-gray pb-2 mb-0">Most interesting people:</h6><br>
+				 {% for follower in newFollowers %}
+					 <div class="row">
+				 {% if follower.user.profile %}
+					 <img src="{{ '/uploads/' ~ follower.user.profile.image }}" alt="" class="mr-2 rounded size">
+				 {% else %}
+					 {% set initials = follower.user.fullName|split(' ') %}
+					 <img data-src="holder.js/32x32?text={{ attribute(initials, 0)|first }}{{ attribute(initials, 1)|first }}&bg=e83e8c&fg=fff&size=8" alt="" class="mr-2 rounded">
+				 {% endif %}
+
+				 <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+					<span class="d-block">
+						<a href="{{ path('micro_post_user', {'username': follower.user.username }) }}">
+							<strong class="text-gray-dark">@{{ follower.user.username }}</strong>
+						</a>
+					</span>
+				 </p>
+					 </div>
+					 <br>
+				 {% endfor %}
+			 </div>
+    	</div>
+ 		</div>
+	</div>
+
+{% endblock %}

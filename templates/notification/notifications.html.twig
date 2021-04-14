@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="col-6 offset-3">
+    <div class="my-3 p-3 bg-white rounded box-shadow">
+    <div class="card">
+        {% if notifications|length %}
+        <div class="card-body">
+            <h5>Unread notifications</h5>
+        </div>
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <a class="btn btn-block btn-default btn-link btn-outline-info"
+                href="{{ path('notification_acknowledge_all') }}">
+                    Mark all as read
+                </a>
+            </li>
+            {% for notification in notifications %}
+            <li class="list-group-item">
+                {% if notification is like %}
+                <a href="{{ path('notification_acknowledge', {'id': notification.id}) }}"
+                class="btn btn-sm btn-primary float-right">
+                    OK
+                </a>
+
+                    <a href="{{ path('micro_post_user', {'username': notification.likedBy.username}) }}">{{ notification.likedBy.username }}</a>
+                    likes your
+                    <a href="{{ path('micro_post_post', {'id': notification.microPost.id}) }}">post</a>
+                    {% else %}
+                        <a href="{{ path('notification_acknowledge', {'id': notification.id}) }}"
+                           class="btn btn-sm btn-primary float-right">
+                            OK
+                        </a>
+
+                        <a href="{{ path('micro_post_user', {'username': notification.messageBy.username}) }}">{{ notification.messageBy.username }}</a>
+                        sends you a
+                        <a href="{{ path('index_conversation') }}">message</a>
+                {% endif %}
+            </li>
+
+            {% endfor %}
+
+        </ul>
+        {% else %}
+            <div class="card-body">
+                You do not have notifications
+            </div>
+        {% endif %}
+    </div>
+    </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello {{ user.fullName }}!{% endblock %}
+{% block body %}
+
+<div class="col-6 offset-3">
+    <div class="my-3 p-3 bg-white rounded box-shadow">
+    <div class="box">
+    <div id="overlay">
+        <div class="text-center">
+            <div class="trick">
+                <img class="image" src="{{ '/uploads/' ~ user.profile.image }}" alt="" >
+            </div>
+        </div>
+        <br>
+        <br>
+        <ul class="text">{{  user.fullName }}</ul>
+
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+                <div class="panel-heading " role="tab" id="headingOne">
+                    <h4 class="panel-title ">
+                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="" aria-controls="collapseOne">
+                            <div class="title  btn btn-danger btn-outline btn-lg">ABOUT {{ user.fullName|upper }}</div>
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        {{ user.profile.description }}
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingTwo">
+                    <h4 class="panel-title">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            <div class="title btn btn-danger btn-outline btn-lg">SOCIAL</div>
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                    <div class="panel-body">
+                        <h5>Hobby's</h5>
+                        {{ user.profile.hobby }}
+                        <br><br>
+                        <h5>Sport</h5>
+                        {{ user.profile.sport }}
+                        <br><br>
+                        <h5>Movies</h5>
+                        {{ user.profile.movies }}
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingThree">
+                    <h4 class="panel-title">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            <div class="title btn btn-danger btn-outline btn-lg">CONTACT</div>
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                    <div class="panel-body">
+                        {{ user.profile.address }}<br>
+                        {{ user.profile.city }}
+                        {{ user.profile.zip }}<br>
+                        {{ user.email }}
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="btn btn-primary" href="{{ path('user_profile_edit', {'id': app.user.id }) }}" role="button">Edit</a>
+        <a class="btn btn-danger" href="{{ path('user_profile_delete', {'id': user.profile.id }) }}" role="button">Delete</a>
+    </div>
+    </div>
+        {% endblock %}
+
